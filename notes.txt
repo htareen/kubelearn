@@ -1,0 +1,119 @@
+Install 
+docker
+docker-compose
+docker-machine
+
+run to check
+docker info
+docker-machine version
+docker-compose version
+
+docker container run -d -p 80:80 nginx
+docker container stop ea439
+docker container ls
+docker container ls -a
+docker container run -d -p 80:80 --name webhost nginx
+docker container logs webhost
+docker container top webhost
+
+docker container --help
+
+docker swarm join --token SWMTKN-1-1mizvkt5g3gtgieizn3w3td800w4lm5tu3iar0vgze5npiih26-8lvlkssk8knhqhfl4qa2iiayi 192.168.99.100:2377
+
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.100.20:6443 --token ul0prs.qcnhzbwwjcx6d2jl \
+--discovery-token-ca-cert-hash sha256:b47893f21edab193a0db7fe0cf37e575394cfbf73b38f827fe86fc22bad51cc4
+
+
+
+eyJhbGciOiJSUzI1NiIsImtpZCI6IkV2dHJwNXF0UG9zSkNrUFJ2TUhvWHNkdXdXUXlnc3F6UzJWRHBYRDR2NEUifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLWRyN2x6Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI1MjJhZmRjOC1kMDdkLTRmNTUtOGM5ZS03N2ZkMDg4YjY3NWEiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06ZGVmYXVsdCJ9.SOeVgjD_daDrNAPs0Cs6Q_PAWgdYqEFqzHlkmWWIaqlNnfXTsR51UU3w0sFx_i2dv0m0qSq2GQitKEYwDIhYw277wRnU5OdGqggBxajdlLDhwTC_UdRbbf1R4SS7deAsPAOs7VCd6K6D9lJyNHKKPjBNtFOF_H5ikSfx7GacDqf7S5vlwIrxRg76aWEziVNKHS0iuL-aZ3NPwiJKaqGRhwCUtDoHhM8cZlqSx4RMfCFjZ3Q9qwSHc9ye83z2EAxLORv6M2kKuRK7gYdYUwl15VMLugop4iMzDp_jTM-NbCO7KUFsW7HKtlqG5eSs4Ze7lCuK6MLA0GQ-OBXZfDcjTA
+
+kubectl run nginx --image nginx
+kubectl create deployment nginx --image nginx
+root@ubuntu-1:~# microk8s.kubectl scale deployment my-apache --replicas 2
+
+root@ubuntu-1:~# microk8s.kubectl logs deployment.apps/my-apache
+root@ubuntu-1:~# microk8s.kubectl logs deployment.apps/my-apache --follow --tail 1
+root@ubuntu-1:~# microk8s.kubectl logs -l run=my-apache
+
+root@ubuntu-1:~# microk8s.kubectl describe pod/my-apache-7b68fdd849-qpzp2
+
+
+Get a shell to the running container:
+========================================
+
+create shell-demo.yaml as below 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shell-demo
+spec:
+  volumes:
+  - name: shared-data
+    emptyDir: {}
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - name: shared-data
+      mountPath: /usr/share/nginx/html
+  hostNetwork: true
+  dnsPolicy: Default
+
+kubectl apply -f https://k8s.io/examples/application/shell-demo.yaml
+kubectl exec --stdin --tty shell-demo -- /bin/bash
+root@ubuntu-1:~# microk8s.kubectl run --generator run-pod/v1 tmp-shell --rm -it --image bretfisher/netshoot -- bash
+
+
+root@ubuntu-1:~# microk8s.kubectl create deployment httpenv --image=bretfisher/httpenv
+root@ubuntu-1:~# microk8s.kubectl scale deployment httpenv --replicas=5
+root@ubuntu-1:~# microk8s.kubectl expose deployment httpenv --port 8888
+
+delete a pod forcefully
+ microk8s.kubectl delete pod my-apache-7b68fdd849-2cvvq --grace-period=0 --force
+
+creating cluster ip service
+root@ubuntu-1:~# microk8s.kubectl expose deployment httpenv --port 8888
+
+create NodePort Service
+root@ubuntu-1:~# microk8s.kubectl expose deployment/httpenv --port 8888 --name httpenv-np --type NodePort
+
+===Run this command if external ip is pending
+https://stackoverflow.com/questions/44110876/kubernetes-service-external-ip-pending
+
+kubectl patch svc httpenv-lb -n default -p '{"spec": {"type": "LoadBalancer", "externalIPs":["192.168.100.20"]}}'
+
+
+Dry Run (create yaml)
+root@ubuntu-1:/home/htareen# microk8s.kubectl create deployment sample --image nginx --dry-run -o yaml
+
+
+
+
+
+
+
+
+
+
+
+
+
